@@ -1,11 +1,10 @@
 /* ==========================================
-   STUDY OS V3
-   JEE CLASS 11
-   Lightweight + LocalStorage
+   STUDY OS
+   CLEAN V4
 ========================================== */
 
 
-/* ---------- JEE SYLLABUS ---------- */
+/* ================= DATA ================= */
 
 const syllabus = {
 
@@ -34,23 +33,15 @@ const syllabus = {
         "Thermodynamics",
         "Equilibrium",
         "Redox Reactions",
-        "Organic Chemistry: Basic Principles",
-        "Hydrocarbons",
-        "Solutions",
-        "Chemical Kinetics",
-        "Surface Chemistry",
-        "s-Block Elements",
-        "p-Block Elements",
-        "Hydrogen",
-        "Environmental Chemistry"
+        "Organic Chemistry: Basic Principles and Techniques",
+        "Hydrocarbons"
     ],
 
     Mathematics: [
         "Sets",
         "Relations and Functions",
         "Trigonometric Functions",
-        "Complex Numbers",
-        "Quadratic Equations",
+        "Complex Numbers and Quadratic Equations",
         "Linear Inequalities",
         "Permutations and Combinations",
         "Binomial Theorem",
@@ -62,30 +53,36 @@ const syllabus = {
         "Statistics",
         "Probability"
     ]
+
 };
 
 
-/* ---------- STORAGE ---------- */
+/* ================= STORAGE ================= */
 
-const savedProgress =
-    JSON.parse(localStorage.getItem("studyOS_progress")) || {};
+let progress =
+    JSON.parse(
+        localStorage.getItem("studyOS_progress")
+    ) || {};
 
-const savedTasks =
-    JSON.parse(localStorage.getItem("studyOS_tasks")) || [];
-
-let progress = savedProgress;
-let tasks = savedTasks;
+let tasks =
+    JSON.parse(
+        localStorage.getItem("studyOS_tasks")
+    ) || [];
 
 let focusMinutes =
-    Number(localStorage.getItem("studyOS_focus")) || 0;
+    Number(
+        localStorage.getItem("studyOS_focus")
+    ) || 0;
 
 let streak =
-    Number(localStorage.getItem("studyOS_streak")) || 0;
+    Number(
+        localStorage.getItem("studyOS_streak")
+    ) || 0;
 
 
-/* ---------- INITIALIZE PROGRESS ---------- */
+/* ================= INIT ================= */
 
-function initializeProgress() {
+function initialize() {
 
     Object.keys(syllabus).forEach(subject => {
 
@@ -95,7 +92,10 @@ function initializeProgress() {
 
         syllabus[subject].forEach(chapter => {
 
-            if (typeof progress[subject][chapter] !== "boolean") {
+            if (
+                typeof progress[subject][chapter]
+                !== "boolean"
+            ) {
                 progress[subject][chapter] = false;
             }
 
@@ -104,280 +104,438 @@ function initializeProgress() {
     });
 
     saveProgress();
+
 }
 
 
-/* ---------- STORAGE FUNCTIONS ---------- */
+/* ================= STORAGE ================= */
 
 function saveProgress() {
+
     localStorage.setItem(
         "studyOS_progress",
         JSON.stringify(progress)
     );
+
 }
 
 function saveTasks() {
+
     localStorage.setItem(
         "studyOS_tasks",
         JSON.stringify(tasks)
     );
+
 }
 
 
-/* ---------- NAVIGATION ---------- */
+/* ================= NAVIGATION ================= */
 
-document.querySelectorAll(".nav-btn").forEach(button => {
+const navItems =
+    document.querySelectorAll(".nav-item");
+
+const pages =
+    document.querySelectorAll(".page");
+
+
+navItems.forEach(button => {
 
     button.addEventListener("click", () => {
 
-        showPage(button.dataset.page);
+        openPage(button.dataset.page);
 
     });
 
 });
 
 
-function showPage(pageName) {
+function openPage(pageName) {
 
-    document.querySelectorAll(".page")
-        .forEach(page => page.classList.remove("active"));
+    /* Hide every page */
+    pages.forEach(page => {
 
-    document.querySelectorAll(".nav-btn")
-        .forEach(button => button.classList.remove("active"));
+        page.classList.remove("active");
 
-    const page = document.getElementById(pageName);
+    });
+
+
+    /* Remove active navigation */
+    navItems.forEach(button => {
+
+        button.classList.remove("active");
+
+    });
+
+
+    /* Show requested page */
+    const page =
+        document.getElementById(pageName);
 
     if (page) {
         page.classList.add("active");
     }
 
-    const nav = document.querySelector(
-        `.nav-btn[data-page="${pageName}"]`
-    );
+
+    /* Activate matching nav */
+    const nav =
+        document.querySelector(
+            `.nav-item[data-page="${pageName}"]`
+        );
 
     if (nav) {
         nav.classList.add("active");
     }
 
-    updateAll();
-}
+
+    /* Close mobile sidebar */
+    closeSidebar();
 
 
-/* ---------- SUBJECT TABS ---------- */
+    /* Refresh data */
+    updateUI();
 
-let currentSubject = "Physics";
 
-document.querySelectorAll(".subject-tab").forEach(tab => {
-
-    tab.addEventListener("click", () => {
-
-        currentSubject = tab.dataset.subject;
-
-        document.querySelectorAll(".subject-tab")
-            .forEach(x => x.classList.remove("active"));
-
-        tab.classList.add("active");
-
-        renderChapters();
-
+    /* Start page at top */
+    window.scrollTo({
+        top: 0,
+        behavior: "instant"
     });
 
-});
-
-
-/* ---------- CHAPTER CALCULATIONS ---------- */
-
-function getSubjectCompleted(subject) {
-
-    return syllabus[subject]
-        .filter(chapter => progress[subject][chapter])
-        .length;
-
 }
 
-function getSubjectTotal(subject) {
 
-    return syllabus[subject].length;
+/* ================= MOBILE SIDEBAR ================= */
 
-}
+const sidebar =
+    document.getElementById("sidebar");
 
-function getSubjectPercent(subject) {
+const menuButton =
+    document.getElementById("menuButton");
 
-    const total = getSubjectTotal(subject);
+const overlay =
+    document.getElementById("overlay");
 
-    if (!total) return 0;
 
-    return Math.round(
-        getSubjectCompleted(subject) / total * 100
+menuButton.addEventListener(
+    "click",
+    toggleSidebar
+);
+
+overlay.addEventListener(
+    "click",
+    closeSidebar
+);
+
+
+function toggleSidebar() {
+
+    sidebar.classList.toggle("open");
+
+    overlay.classList.toggle(
+        "active"
     );
 
 }
 
 
-function getTotalChapters() {
+function closeSidebar() {
 
-    return Object.values(syllabus)
-        .reduce((sum, chapters) => sum + chapters.length, 0);
+    sidebar.classList.remove("open");
+
+    overlay.classList.remove(
+        "active"
+    );
 
 }
 
 
-function getCompletedChapters() {
+/* ================= SUBJECTS ================= */
 
-    return Object.keys(syllabus)
+let selectedSubject = "Physics";
+
+
+document
+    .querySelectorAll(".subject-tab")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                selectedSubject =
+                    button.dataset.subject;
+
+                document
+                    .querySelectorAll(".subject-tab")
+                    .forEach(tab =>
+                        tab.classList.remove("active")
+                    );
+
+                button.classList.add("active");
+
+                renderChapters();
+
+            }
+        );
+
+    });
+
+
+function renderChapters() {
+
+    const container =
+        document.getElementById("chapters");
+
+    if (!container) return;
+
+
+    container.innerHTML =
+        syllabus[selectedSubject]
+        .map((chapter, index) => {
+
+            const done =
+                progress[selectedSubject][chapter];
+
+            return `
+
+                <div class="chapter">
+
+                    <div class="chapter-top">
+
+                        <div class="chapter-name">
+                            <b>
+                                ${index + 1}. ${escapeHTML(chapter)}
+                            </b>
+                        </div>
+
+                        <span class="chapter-status">
+                            ${done ? "Completed" : "Pending"}
+                        </span>
+
+                        <button
+                            class="chapter-button ${done ? "done" : ""}"
+                            onclick="toggleChapter(${index})"
+                        >
+                            ${done ? "✓ Done" : "Complete"}
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        })
+        .join("");
+
+}
+
+
+function toggleChapter(index) {
+
+    const chapter =
+        syllabus[selectedSubject][index];
+
+    progress[selectedSubject][chapter] =
+        !progress[selectedSubject][chapter];
+
+    saveProgress();
+
+    renderChapters();
+
+    updateUI();
+
+}
+
+
+/* ================= CALCULATIONS ================= */
+
+function totalChapters() {
+
+    return Object.values(syllabus)
         .reduce(
-            (sum, subject) =>
-                sum + getSubjectCompleted(subject),
+            (total, chapters) =>
+                total + chapters.length,
             0
         );
 
 }
 
 
-function getOverallPercent() {
+function completedChapters() {
 
-    const total = getTotalChapters();
+    let total = 0;
+
+    Object.keys(syllabus)
+        .forEach(subject => {
+
+            total +=
+                syllabus[subject]
+                .filter(
+                    chapter =>
+                        progress[subject][chapter]
+                )
+                .length;
+
+        });
+
+    return total;
+
+}
+
+
+function overallProgress() {
+
+    const total =
+        totalChapters();
 
     if (!total) return 0;
 
     return Math.round(
-        getCompletedChapters() / total * 100
+        completedChapters()
+        / total
+        * 100
     );
 
 }
 
 
-/* ---------- CHAPTER UI ---------- */
+function subjectProgress(subject) {
 
-function renderChapters() {
+    const total =
+        syllabus[subject].length;
 
-    const container =
-        document.getElementById("chapterList");
+    const done =
+        syllabus[subject]
+        .filter(
+            chapter =>
+                progress[subject][chapter]
+        )
+        .length;
 
-    if (!container) return;
+    return total
+        ? Math.round(done / total * 100)
+        : 0;
 
-    const chapters = syllabus[currentSubject];
+}
 
-    container.innerHTML = chapters.map((chapter, index) => {
 
-        const completed =
-            progress[currentSubject][chapter];
+/* ================= SUBJECT UI ================= */
 
-        return `
-            <div class="chapter">
+function subjectHTML(subject) {
 
-                <div class="chapter-top">
+    const percent =
+        subjectProgress(subject);
 
-                    <div class="chapter-name">
-                        <strong>${index + 1}. ${chapter}</strong>
-                    </div>
+    const done =
+        syllabus[subject]
+        .filter(
+            chapter =>
+                progress[subject][chapter]
+        )
+        .length;
 
-                    <span class="chapter-status">
-                        ${completed ? "Completed" : "Not started"}
-                    </span>
+    return `
 
-                    <button
-                        class="chapter-btn ${completed ? "completed" : ""}"
-                        onclick="toggleChapter('${escapeQuotes(currentSubject)}','${escapeQuotes(chapter)}')"
-                    >
-                        ${completed ? "✓ Done" : "Complete"}
-                    </button>
+        <div class="subject-row">
 
+            <div class="subject-info">
+
+                <b>${subject}</b>
+
+                <span>
+                    ${done}/${syllabus[subject].length}
+                    · ${percent}%
+                </span>
+
+            </div>
+
+            <div class="progress-track">
+
+                <div
+                    class="progress-fill"
+                    style="width:${percent}%">
                 </div>
 
             </div>
-        `;
 
-    }).join("");
+        </div>
 
-}
-
-
-function escapeQuotes(text) {
-
-    return text
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'");
+    `;
 
 }
 
 
-function toggleChapter(subject, chapter) {
+function renderSubjectProgress(id) {
 
-    progress[subject][chapter] =
-        !progress[subject][chapter];
+    const element =
+        document.getElementById(id);
 
-    saveProgress();
+    if (!element) return;
 
-    renderChapters();
-    updateAll();
-
-}
-
-
-/* ---------- SUBJECT PROGRESS UI ---------- */
-
-function renderSubjectProgress(containerId) {
-
-    const container =
-        document.getElementById(containerId);
-
-    if (!container) return;
-
-    container.innerHTML =
-        Object.keys(syllabus).map(subject => {
-
-            const percent =
-                getSubjectPercent(subject);
-
-            return `
-                <div class="subject-row">
-
-                    <div class="subject-info">
-                        <strong>${subject}</strong>
-                        <span>
-                            ${getSubjectCompleted(subject)}
-                            / ${getSubjectTotal(subject)}
-                            · ${percent}%
-                        </span>
-                    </div>
-
-                    <div class="progress-track">
-                        <div
-                            class="progress-fill"
-                            style="width:${percent}%"
-                        ></div>
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
+    element.innerHTML =
+        Object.keys(syllabus)
+        .map(subjectHTML)
+        .join("");
 
 }
 
 
-/* ---------- TASK SYSTEM ---------- */
+/* ================= TASKS ================= */
 
-function addTask() {
+let taskFilter = "all";
 
-    const name =
-        prompt("Enter your study task:");
 
-    if (!name || !name.trim()) {
-        return;
-    }
+document
+    .querySelectorAll(".filter")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                taskFilter =
+                    button.dataset.filter;
+
+                document
+                    .querySelectorAll(".filter")
+                    .forEach(x =>
+                        x.classList.remove("active")
+                    );
+
+                button.classList.add("active");
+
+                renderTasks();
+
+            }
+        );
+
+    });
+
+
+function createTask() {
+
+    const text =
+        prompt("What do you need to study?");
+
+    if (!text || !text.trim()) return;
 
     tasks.unshift({
+
         id: Date.now(),
-        name: name.trim(),
+
+        title: text.trim(),
+
         completed: false,
-        date: new Date().toISOString()
+
+        created:
+            new Date().toISOString()
+
     });
 
     saveTasks();
 
-    updateAll();
+    updateUI();
 
 }
 
@@ -385,7 +543,9 @@ function addTask() {
 function toggleTask(id) {
 
     const task =
-        tasks.find(t => t.id === id);
+        tasks.find(
+            task => task.id === id
+        );
 
     if (!task) return;
 
@@ -394,7 +554,7 @@ function toggleTask(id) {
 
     saveTasks();
 
-    updateAll();
+    updateUI();
 
 }
 
@@ -402,55 +562,13 @@ function toggleTask(id) {
 function deleteTask(id) {
 
     tasks =
-        tasks.filter(task => task.id !== id);
+        tasks.filter(
+            task => task.id !== id
+        );
 
     saveTasks();
 
-    updateAll();
-
-}
-
-
-let currentTaskFilter = "all";
-
-document.querySelectorAll(".filter").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        currentTaskFilter =
-            button.dataset.filter;
-
-        document.querySelectorAll(".filter")
-            .forEach(x => x.classList.remove("active"));
-
-        button.classList.add("active");
-
-        renderTasks();
-
-    });
-
-});
-
-
-function getFilteredTasks() {
-
-    if (currentTaskFilter === "pending") {
-
-        return tasks.filter(
-            task => !task.completed
-        );
-
-    }
-
-    if (currentTaskFilter === "completed") {
-
-        return tasks.filter(
-            task => task.completed
-        );
-
-    }
-
-    return tasks;
+    updateUI();
 
 }
 
@@ -458,7 +576,8 @@ function getFilteredTasks() {
 function taskHTML(task) {
 
     return `
-        <div class="task-item">
+
+        <div class="task">
 
             <div
                 class="task-check ${task.completed ? "done" : ""}"
@@ -467,18 +586,21 @@ function taskHTML(task) {
                 ${task.completed ? "✓" : ""}
             </div>
 
-            <div class="task-name ${task.completed ? "done" : ""}">
-                ${escapeHTML(task.name)}
+            <div
+                class="task-name ${task.completed ? "done" : ""}"
+            >
+                ${escapeHTML(task.title)}
             </div>
 
             <button
-                class="task-delete"
+                class="delete-task"
                 onclick="deleteTask(${task.id})"
             >
                 ✕
             </button>
 
         </div>
+
     `;
 
 }
@@ -491,19 +613,42 @@ function renderTasks() {
 
     if (!container) return;
 
-    const filtered =
-        getFilteredTasks();
 
-    if (!filtered.length) {
+    let visible = tasks;
+
+
+    if (taskFilter === "pending") {
+
+        visible =
+            tasks.filter(
+                task => !task.completed
+            );
+
+    }
+
+
+    if (taskFilter === "completed") {
+
+        visible =
+            tasks.filter(
+                task => task.completed
+            );
+
+    }
+
+
+    if (!visible.length) {
 
         container.innerHTML =
             `<div class="empty">No tasks here.</div>`;
 
         return;
+
     }
 
+
     container.innerHTML =
-        filtered.map(taskHTML).join("");
+        visible.map(taskHTML).join("");
 
 }
 
@@ -511,13 +656,18 @@ function renderTasks() {
 function renderDashboardTasks() {
 
     const container =
-        document.getElementById("dashboardTasks");
+        document.getElementById(
+            "dashboardTasks"
+        );
 
     if (!container) return;
 
+
     const pending =
-        tasks.filter(task => !task.completed)
-             .slice(0, 5);
+        tasks
+        .filter(task => !task.completed)
+        .slice(0, 4);
+
 
     if (!pending.length) {
 
@@ -525,7 +675,9 @@ function renderDashboardTasks() {
             `<div class="empty">No pending tasks 🎉</div>`;
 
         return;
+
     }
+
 
     container.innerHTML =
         pending.map(taskHTML).join("");
@@ -533,114 +685,170 @@ function renderDashboardTasks() {
 }
 
 
-function escapeHTML(text) {
+/* ================= PLANNER ================= */
 
-    const div = document.createElement("div");
+function renderPlanner() {
 
-    div.textContent = text;
+    const today =
+        document.getElementById(
+            "todayPlanner"
+        );
 
-    return div.innerHTML;
+    const upcoming =
+        document.getElementById(
+            "upcomingPlanner"
+        );
+
+
+    if (!today || !upcoming) return;
+
+
+    const pending =
+        tasks.filter(
+            task => !task.completed
+        );
+
+
+    today.innerHTML =
+        pending.length
+            ? pending
+                .slice(0, 3)
+                .map(taskHTML)
+                .join("")
+            : `<div class="empty">
+                    Nothing planned yet.
+               </div>`;
+
+
+    upcoming.innerHTML =
+        pending.length > 3
+            ? pending
+                .slice(3, 8)
+                .map(taskHTML)
+                .join("")
+            : `<div class="empty">
+                    No upcoming tasks.
+               </div>`;
 
 }
 
 
-/* ---------- TASK STATS ---------- */
-
-function getTaskPercent() {
-
-    if (!tasks.length) return 0;
-
-    const completed =
-        tasks.filter(task => task.completed).length;
-
-    return Math.round(
-        completed / tasks.length * 100
-    );
-
-}
-
-
-/* ---------- ANALYSIS ---------- */
+/* ================= ANALYSIS ================= */
 
 function renderAnalysis() {
 
-    const overall =
-        getOverallPercent();
+    const percent =
+        overallProgress();
 
     const completed =
-        getCompletedChapters();
+        completedChapters();
 
     const total =
-        getTotalChapters();
+        totalChapters();
+
+    const taskTotal =
+        tasks.length;
+
+    const taskDone =
+        tasks.filter(
+            task => task.completed
+        ).length;
 
     const taskPercent =
-        getTaskPercent();
+        taskTotal
+            ? Math.round(
+                taskDone / taskTotal * 100
+            )
+            : 0;
+
 
     document.getElementById(
         "analysisPercent"
-    ).textContent = `${overall}%`;
+    ).textContent =
+        percent + "%";
+
 
     document.getElementById(
         "analysisChapters"
-    ).textContent = `${completed} / ${total}`;
+    ).textContent =
+        `${completed}/${total}`;
+
 
     document.getElementById(
         "analysisTasks"
-    ).textContent = `${taskPercent}%`;
+    ).textContent =
+        taskPercent + "%";
+
 
     document.getElementById(
         "analysisFocus"
-    ).textContent = formatMinutes(focusMinutes);
+    ).textContent =
+        formatMinutes(focusMinutes);
+
 
     document.getElementById(
         "analysisStreak"
-    ).textContent = streak;
+    ).textContent =
+        streak;
 
-    let message = "";
-    let sub = "";
 
-    if (overall === 0) {
+    let title;
+    let description;
 
-        message = "Let's get started.";
-        sub = "Complete your first chapter to begin tracking progress.";
 
-    } else if (overall < 25) {
+    if (percent === 0) {
 
-        message = "Foundation phase.";
-        sub = "Keep building your Class 11 base.";
+        title = "Let's begin.";
+        description =
+            "Complete your first chapter to start building your preparation.";
 
-    } else if (overall < 50) {
+    } else if (percent < 25) {
 
-        message = "Good progress.";
-        sub = "You're building momentum. Keep going.";
+        title = "Foundation phase.";
+        description =
+            "Keep building your Class 11 fundamentals.";
 
-    } else if (overall < 75) {
+    } else if (percent < 50) {
 
-        message = "You're getting strong.";
-        sub = "More than half the syllabus is within reach.";
+        title = "Good progress.";
+        description =
+            "You're building momentum. Keep it consistent.";
 
-    } else if (overall < 100) {
+    } else if (percent < 75) {
 
-        message = "Almost there.";
-        sub = "Finish the remaining chapters.";
+        title = "Strong progress.";
+        description =
+            "You're more than halfway through your tracked syllabus.";
+
+    } else if (percent < 100) {
+
+        title = "Almost there.";
+        description =
+            "Finish the remaining chapters and keep revising.";
 
     } else {
 
-        message = "Class 11 complete! 🔥";
-        sub = "Amazing work. Time to strengthen with revision and PYQs.";
+        title = "Class 11 complete! 🔥";
+        description =
+            "Great work. Focus on revision, practice and PYQs.";
 
     }
 
-    document.getElementById(
-        "analysisMessage"
-    ).textContent = message;
 
     document.getElementById(
-        "analysisSub"
-    ).textContent = sub;
+        "analysisTitle"
+    ).textContent = title;
 
 
-    renderSubjectProgress("analysisSubjects");
+    document.getElementById(
+        "analysisDescription"
+    ).textContent = description;
+
+
+    renderSubjectProgress(
+        "analysisSubjects"
+    );
+
 
     renderInsights();
 
@@ -654,65 +862,69 @@ function renderInsights() {
 
     if (!container) return;
 
-    const insights = [];
 
     const subjects =
         Object.keys(syllabus);
 
-    const percentages =
-        subjects.map(subject => ({
-            subject,
-            percent: getSubjectPercent(subject)
-        }));
 
     const weakest =
-        percentages.reduce(
+        subjects.reduce(
             (a, b) =>
-                a.percent <= b.percent ? a : b
+                subjectProgress(a)
+                <= subjectProgress(b)
+                    ? a
+                    : b
         );
+
 
     const strongest =
-        percentages.reduce(
+        subjects.reduce(
             (a, b) =>
-                a.percent >= b.percent ? a : b
+                subjectProgress(a)
+                >= subjectProgress(b)
+                    ? a
+                    : b
         );
 
 
-    if (getOverallPercent() === 0) {
+    const messages = [];
 
-        insights.push(
-            "Start by completing one chapter in the subject you're currently studying."
+
+    if (overallProgress() === 0) {
+
+        messages.push(
+            "Start with one chapter today. Small progress builds momentum."
         );
 
     } else {
 
-        insights.push(
-            `${strongest.subject} is currently your strongest subject at ${strongest.percent}%.`
+        messages.push(
+            `${strongest} is currently your strongest subject at ${subjectProgress(strongest)}%.`
         );
 
-        insights.push(
-            `${weakest.subject} needs the most attention at ${weakest.percent}%.`
+        messages.push(
+            `${weakest} is currently your lowest-progress subject at ${subjectProgress(weakest)}%.`
         );
 
     }
 
 
-    if (getTaskPercent() < 50 && tasks.length > 0) {
+    if (tasks.length === 0) {
 
-        insights.push(
-            "Your task completion is below 50%. Try finishing your highest-priority tasks first."
+        messages.push(
+            "Add study tasks so your planner can track your daily workload."
         );
 
-    } else if (tasks.length > 0) {
+    } else if (getTaskPercent() >= 70) {
 
-        insights.push(
-            "Your task completion is looking good. Keep your daily workload realistic."
+        messages.push(
+            "Your task completion is strong. Keep your daily workload manageable."
         );
 
     } else {
 
-        insights.push(
-            "Add a few study tasks to make your daily plan more useful."
+        messages.push(
+            "Try completing your pending tasks before adding too many new ones."
         );
 
     }
@@ -720,223 +932,89 @@ function renderInsights() {
 
     if (focusMinutes === 0) {
 
-        insights.push(
-            "You haven't logged any Focus Mode time yet. Try a 25-minute session."
+        messages.push(
+            "Try a 25-minute Focus session to start logging study time."
         );
 
     } else {
 
-        insights.push(
-            `You've logged ${formatMinutes(focusMinutes)} of Focus Mode time.`
+        messages.push(
+            `You've completed ${formatMinutes(focusMinutes)} of Focus Mode time.`
         );
 
     }
 
 
     container.innerHTML =
-        insights.map(text =>
-            `<div class="insight">💡 ${text}</div>`
-        ).join("");
+        messages
+        .map(
+            message =>
+                `<div class="insight">💡 ${message}</div>`
+        )
+        .join("");
 
 }
 
 
-/* ---------- DASHBOARD ---------- */
+/* ================= DASHBOARD ================= */
 
 function renderDashboard() {
 
-    const overall =
-        getOverallPercent();
+    const percent =
+        overallProgress();
+
 
     document.getElementById(
-        "heroProgress"
-    ).textContent = `${overall}%`;
+        "overallPercent"
+    ).textContent =
+        percent + "%";
+
 
     document.getElementById(
-        "totalChapters"
-    ).textContent = getTotalChapters();
+        "chapterCount"
+    ).textContent =
+        totalChapters();
+
 
     document.getElementById(
-        "completedChapters"
-    ).textContent = getCompletedChapters();
+        "completedCount"
+    ).textContent =
+        completedChapters();
+
 
     document.getElementById(
-        "totalTasks"
-    ).textContent = tasks.length;
+        "taskCount"
+    ).textContent =
+        tasks.length;
+
 
     document.getElementById(
-        "focusTime"
+        "focusCount"
     ).textContent =
         formatMinutes(focusMinutes);
+
 
     renderSubjectProgress(
         "dashboardSubjects"
     );
+
 
     renderDashboardTasks();
 
 }
 
 
-/* ---------- PLANNER ---------- */
-
-function renderPlanner() {
-
-    const today =
-        document.getElementById("todayPlan");
-
-    const upcoming =
-        document.getElementById("upcomingPlan");
-
-    if (!today || !upcoming) return;
-
-    const pending =
-        tasks.filter(task => !task.completed);
-
-    today.innerHTML =
-        pending.slice(0, 3).length
-            ? pending.slice(0, 3).map(taskHTML).join("")
-            : `<div class="empty">Nothing planned.</div>`;
-
-    upcoming.innerHTML =
-        pending.slice(3, 8).length
-            ? pending.slice(3, 8).map(taskHTML).join("")
-            : `<div class="empty">No upcoming tasks.</div>`;
-
-}
-
-
-/* ---------- FOCUS TIMER ---------- */
-
-let timerSeconds = 25 * 60;
-let timerRunning = false;
-let timerInterval = null;
-
-
-function updateTimerDisplay() {
-
-    const minutes =
-        Math.floor(timerSeconds / 60);
-
-    const seconds =
-        timerSeconds % 60;
-
-    document.getElementById(
-        "timer"
-    ).textContent =
-        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-}
-
-
-function setTimer(minutes) {
-
-    stopTimer();
-
-    timerSeconds =
-        minutes * 60;
-
-    updateTimerDisplay();
-
-}
-
-
-function startTimer() {
-
-    if (timerRunning) return;
-
-    timerRunning = true;
-
-    document.getElementById(
-        "startTimer"
-    ).textContent = "Pause";
-
-    timerInterval =
-        setInterval(() => {
-
-            if (timerSeconds <= 0) {
-
-                stopTimer();
-
-                focusMinutes += 25;
-
-                localStorage.setItem(
-                    "studyOS_focus",
-                    focusMinutes
-                );
-
-                updateAll();
-
-                alert("Focus session complete! 🔥");
-
-                setTimer(25);
-
-                return;
-            }
-
-            timerSeconds--;
-
-            updateTimerDisplay();
-
-        }, 1000);
-
-}
-
-
-function stopTimer() {
-
-    timerRunning = false;
-
-    clearInterval(timerInterval);
-
-    timerInterval = null;
-
-    const button =
-        document.getElementById("startTimer");
-
-    if (button) {
-        button.textContent = "Start";
-    }
-
-}
-
-
-document.getElementById(
-    "startTimer"
-).addEventListener("click", () => {
-
-    if (timerRunning) {
-
-        stopTimer();
-
-    } else {
-
-        startTimer();
-
-    }
-
-});
-
-
-document.getElementById(
-    "resetTimer"
-).addEventListener("click", () => {
-
-    setTimer(25);
-
-});
-
-
-/* ---------- DATE ---------- */
+/* ================= DATE ================= */
 
 function renderDate() {
 
-    const now = new Date();
+    const date =
+        new Date();
 
     document.getElementById(
-        "todayDate"
+        "currentDate"
     ).textContent =
-        now.toLocaleDateString(
+        date.toLocaleDateString(
             "en-IN",
             {
                 weekday: "short",
@@ -949,52 +1027,62 @@ function renderDate() {
 }
 
 
-/* ---------- STREAK ---------- */
+/* ================= STREAK ================= */
 
 function updateStreak() {
 
     const today =
-        new Date().toISOString().slice(0, 10);
+        new Date()
+        .toISOString()
+        .slice(0, 10);
 
-    const lastDate =
-        localStorage.getItem("studyOS_lastDate");
 
-    if (lastDate !== today) {
+    const last =
+        localStorage.getItem(
+            "studyOS_lastDate"
+        );
 
-        if (lastDate) {
 
-            const last =
-                new Date(lastDate);
+    if (last !== today) {
+
+        if (!last) {
+
+            streak = 1;
+
+        } else {
+
+            const previous =
+                new Date(last);
 
             const current =
                 new Date(today);
 
-            const difference =
+            const days =
                 Math.floor(
-                    (current - last) /
+                    (current - previous)
+                    /
                     (1000 * 60 * 60 * 24)
                 );
 
-            if (difference === 1) {
+
+            if (days === 1) {
 
                 streak++;
 
-            } else if (difference > 1) {
+            } else if (days > 1) {
 
                 streak = 1;
 
             }
 
-        } else {
-
-            streak = 1;
-
         }
+
 
         localStorage.setItem(
             "studyOS_lastDate",
             today
         );
+
 
         localStorage.setItem(
             "studyOS_streak",
@@ -1003,15 +1091,185 @@ function updateStreak() {
 
     }
 
+
     document.getElementById(
-        "sideStreak"
+        "sidebarStreak"
     ).textContent =
         `${streak} day${streak === 1 ? "" : "s"}`;
 
 }
 
 
-/* ---------- FORMAT ---------- */
+/* ================= TIMER ================= */
+
+let secondsLeft = 25 * 60;
+
+let timerRunning = false;
+
+let timerInterval = null;
+
+
+function updateTimer() {
+
+    const minutes =
+        Math.floor(
+            secondsLeft / 60
+        );
+
+    const seconds =
+        secondsLeft % 60;
+
+
+    document.getElementById(
+        "timer"
+    ).textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+}
+
+
+function startTimer() {
+
+    if (timerRunning) return;
+
+
+    timerRunning = true;
+
+
+    document.getElementById(
+        "timerButton"
+    ).textContent =
+        "Pause";
+
+
+    timerInterval =
+        setInterval(() => {
+
+            if (secondsLeft <= 0) {
+
+                clearInterval(
+                    timerInterval
+                );
+
+                timerInterval = null;
+
+                timerRunning = false;
+
+                focusMinutes +=
+                    Math.round(
+                        25
+                    );
+
+                localStorage.setItem(
+                    "studyOS_focus",
+                    focusMinutes
+                );
+
+                document.getElementById(
+                    "timerButton"
+                ).textContent =
+                    "Start";
+
+                alert(
+                    "Focus session complete! 🔥"
+                );
+
+                updateUI();
+
+                return;
+
+            }
+
+
+            secondsLeft--;
+
+            updateTimer();
+
+        }, 1000);
+
+}
+
+
+function pauseTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+    timerInterval = null;
+
+    timerRunning = false;
+
+    document.getElementById(
+        "timerButton"
+    ).textContent =
+        "Start";
+
+}
+
+
+function setTimer(minutes) {
+
+    pauseTimer();
+
+    secondsLeft =
+        minutes * 60;
+
+    updateTimer();
+
+}
+
+
+document.getElementById(
+    "timerButton"
+).addEventListener(
+    "click",
+    () => {
+
+        if (timerRunning) {
+
+            pauseTimer();
+
+        } else {
+
+            startTimer();
+
+        }
+
+    }
+);
+
+
+document.getElementById(
+    "resetButton"
+).addEventListener(
+    "click",
+    () => {
+
+        setTimer(25);
+
+    }
+);
+
+
+/* ================= HELPERS ================= */
+
+function getTaskPercent() {
+
+    if (!tasks.length) return 0;
+
+    return Math.round(
+        tasks.filter(
+            task => task.completed
+        ).length
+        /
+        tasks.length
+        *
+        100
+    );
+
+}
+
 
 function formatMinutes(minutes) {
 
@@ -1022,10 +1280,13 @@ function formatMinutes(minutes) {
     }
 
     const hours =
-        Math.floor(minutes / 60);
+        Math.floor(
+            minutes / 60
+        );
 
     const mins =
         minutes % 60;
+
 
     return mins
         ? `${hours}h ${mins}m`
@@ -1034,17 +1295,29 @@ function formatMinutes(minutes) {
 }
 
 
-/* ---------- GLOBAL UPDATE ---------- */
+function escapeHTML(text) {
 
-function updateAll() {
+    const element =
+        document.createElement("div");
+
+    element.textContent = text;
+
+    return element.innerHTML;
+
+}
+
+
+/* ================= UPDATE EVERYTHING ================= */
+
+function updateUI() {
 
     renderDashboard();
+
+    renderChapters();
 
     renderTasks();
 
     renderPlanner();
-
-    renderChapters();
 
     renderAnalysis();
 
@@ -1053,12 +1326,12 @@ function updateAll() {
 }
 
 
-/* ---------- START ---------- */
+/* ================= START ================= */
 
-initializeProgress();
+initialize();
 
 renderDate();
 
-updateTimerDisplay();
+updateTimer();
 
-updateAll();
+updateUI();
