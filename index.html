@@ -1,390 +1,592 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study OS — JEE Class 11</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study OS — JEE Class 11</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="app">
+  <aside class="sidebar">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">S</div>
-            <div>
-                <h2>Study OS</h2>
-                <span>JEE COMMAND CENTER</span>
-            </div>
+    <div class="logo">
+      <div class="logo-icon">S</div>
+      <div>
+        <h2>Study OS</h2>
+        <span>JEE • Class 11</span>
+      </div>
+    </div>
+
+    <nav>
+      <button class="nav-btn active" data-page="dashboard">🏠 Dashboard</button>
+      <button class="nav-btn" data-page="subjects">📚 Subjects</button>
+      <button class="nav-btn" data-page="planner">📅 Planner</button>
+      <button class="nav-btn" data-page="tasks">✅ Tasks</button>
+      <button class="nav-btn" data-page="analysis">📊 Analysis</button>
+      <button class="nav-btn" data-page="focus">⏱️ Focus</button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="goal-box">
+        <span>JEE Goal</span>
+        <strong>Crack JEE 🚀</strong>
+
+        <div class="mini-progress">
+          <div id="miniProgress"></div>
         </div>
 
-        <nav>
-            <button class="nav-btn active" data-page="dashboard">
-                <span>⌂</span> Dashboard
-            </button>
+        <small id="goalText">0% completed</small>
+      </div>
+    </div>
 
-            <button class="nav-btn" data-page="chapters">
-                <span>▣</span> Chapters
-            </button>
+  </aside>
 
-            <button class="nav-btn" data-page="tests">
-                <span>◉</span> Tests
-            </button>
 
-            <button class="nav-btn" data-page="analytics">
-                <span>◈</span> Analytics
-            </button>
+  <main>
 
-            <button class="nav-btn" data-page="timer">
-                <span>◷</span> Study Timer
-            </button>
-        </nav>
+    <header>
 
-        <div class="sidebar-bottom">
-            <div class="class-card">
-                <small>CURRENT TRACK</small>
-                <strong>CLASS 11</strong>
-                <span>JEE MAIN + ADVANCED</span>
-            </div>
+      <div>
+        <p class="eyebrow">GOOD MORNING 👋</p>
+        <h1 id="pageTitle">Dashboard</h1>
+        <p class="subtitle">
+          Your Class 11 JEE command center.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <div class="date-box" id="dateBox"></div>
+        <button class="profile">Y</button>
+      </div>
+
+    </header>
+
+
+    <!-- DASHBOARD -->
+
+    <section id="dashboard" class="page active">
+
+      <div class="hero">
+
+        <div>
+
+          <span class="hero-tag">
+            CLASS 11 • JEE PREP
+          </span>
+
+          <h2>
+            Build your rank,
+            <br>
+            <span>one chapter at a time.</span>
+          </h2>
+
+          <p>
+            Stay consistent. Track your chapters. Master the basics.
+          </p>
+
+          <button
+            class="primary-btn"
+            onclick="showPage('planner')"
+          >
+            Open Today's Plan →
+          </button>
+
         </div>
-    </aside>
 
-    <!-- MAIN -->
-    <main class="main">
+        <div class="hero-orbit">
 
-        <!-- TOPBAR -->
-        <header class="topbar">
+          <div class="orbit-circle">
+
+            <strong id="overallPercent">0%</strong>
+
+            <span>Overall</span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="stats">
+
+        <div class="stat-card">
+          <span>📚</span>
+
+          <div>
+            <small>Chapters Done</small>
+            <strong id="chaptersDone">0</strong>
+          </div>
+        </div>
+
+
+        <div class="stat-card">
+          <span>🔥</span>
+
+          <div>
+            <small>Study Streak</small>
+            <strong id="streak">1 day</strong>
+          </div>
+        </div>
+
+
+        <div class="stat-card">
+          <span>⏱️</span>
+
+          <div>
+            <small>Focus Time</small>
+            <strong id="focusTime">0h 00m</strong>
+          </div>
+        </div>
+
+
+        <div class="stat-card">
+          <span>🎯</span>
+
+          <div>
+            <small>Tasks Today</small>
+            <strong id="tasksDone">0 / 0</strong>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="panel">
+
+          <div class="panel-heading">
+
             <div>
-                <p class="eyebrow">MONDAY • SEPTEMBER 7</p>
-                <h1 id="pageTitle">Good morning, Warrior.</h1>
+              <span class="section-label">TODAY</span>
+              <h3>Today's Tasks</h3>
             </div>
 
-            <div class="top-actions">
-                <div class="streak">
-                    🔥 <strong id="streakValue">1</strong>
-                    <span>day streak</span>
-                </div>
+            <button
+              onclick="showPage('tasks')"
+              class="text-btn"
+            >
+              View all →
+            </button>
 
-                <div class="avatar">Y</div>
-            </div>
-        </header>
+          </div>
 
-        <!-- DASHBOARD -->
-        <section id="dashboard" class="page active">
+          <div
+            id="dashboardTasks"
+            class="task-list"
+          ></div>
 
-            <div class="hero">
-                <div>
-                    <span class="badge">CLASS 11 • JEE</span>
-                    <h2>Your JEE journey<br><span>starts here.</span></h2>
-                    <p>
-                        Track chapters, practice, tests and your preparation
-                        progress from one command center.
-                    </p>
+        </div>
 
-                    <button class="primary-btn" id="continueBtn">
-                        Continue studying →
-                    </button>
-                </div>
 
-                <div class="hero-orb">
-                    <div class="orb-inner">
-                        <strong id="overallProgress">0%</strong>
-                        <span>OVERALL</span>
-                    </div>
-                </div>
+        <div class="panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <span class="section-label">JEE SYLLABUS</span>
+              <h3>Subject Progress</h3>
             </div>
 
-            <div class="stats-grid">
+          </div>
 
-                <div class="stat-card">
-                    <span>CHAPTERS</span>
-                    <strong id="completedCount">0</strong>
-                    <small>completed</small>
-                </div>
+          <div id="subjectProgress"></div>
 
-                <div class="stat-card">
-                    <span>QUESTIONS</span>
-                    <strong id="questionCount">0</strong>
-                    <small>practiced</small>
-                </div>
+        </div>
 
-                <div class="stat-card">
-                    <span>STUDY TIME</span>
-                    <strong id="studyTime">0h</strong>
-                    <small>this week</small>
-                </div>
+      </div>
 
-                <div class="stat-card">
-                    <span>ACCURACY</span>
-                    <strong id="accuracy">0%</strong>
-                    <small>practice accuracy</small>
-                </div>
+    </section>
 
+
+
+    <!-- SUBJECTS -->
+
+    <section id="subjects" class="page">
+
+      <div class="section-top">
+
+        <div>
+          <span class="section-label">CLASS 11</span>
+
+          <h2>JEE Subjects</h2>
+
+          <p>
+            Track your NCERT + JEE preparation chapter by chapter.
+          </p>
+        </div>
+
+      </div>
+
+      <div
+        id="subjectCards"
+        class="subject-grid"
+      ></div>
+
+    </section>
+
+
+
+    <!-- PLANNER -->
+
+    <section id="planner" class="page">
+
+      <div class="section-top">
+
+        <div>
+          <span class="section-label">DAILY SYSTEM</span>
+
+          <h2>Study Planner</h2>
+
+          <p>
+            Plan your day and execute.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="planner-card">
+
+        <div class="planner-time">
+
+          <strong>Today</strong>
+
+          <span id="plannerDate"></span>
+
+        </div>
+
+
+        <div id="plannerTasks"></div>
+
+
+        <button
+          class="primary-btn add-task-btn"
+          onclick="addTask()"
+        >
+          + Add Task
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- TASKS -->
+
+    <section id="tasks" class="page">
+
+      <div class="section-top">
+
+        <div>
+          <span class="section-label">EXECUTION</span>
+
+          <h2>Tasks</h2>
+
+          <p>
+            Complete your daily targets.
+          </p>
+        </div>
+
+
+        <button
+          class="primary-btn"
+          onclick="addTask()"
+        >
+          + New Task
+        </button>
+
+      </div>
+
+
+      <div class="panel">
+
+        <div
+          id="allTasks"
+          class="task-list large"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ANALYSIS -->
+
+    <section id="analysis" class="page">
+
+      <div class="section-top analysis-header">
+
+        <div>
+          <span class="section-label">
+            PERFORMANCE CENTER
+          </span>
+
+          <h2>Study Analysis</h2>
+
+          <p>
+            Understand your preparation and improve smarter.
+          </p>
+        </div>
+
+        <button
+          class="secondary-btn"
+          onclick="refreshAnalysis()"
+        >
+          ↻ Refresh Analysis
+        </button>
+
+      </div>
+
+
+      <!-- TOP ANALYSIS CARDS -->
+
+      <div class="analysis-grid">
+
+        <div class="analysis-card main-analysis">
+
+          <div class="analysis-card-top">
+
+            <div>
+              <span class="card-label">
+                OVERALL PREPARATION
+              </span>
+
+              <h3 id="analysisOverall">
+                0%
+              </h3>
             </div>
 
-            <div class="section-heading">
-                <div>
-                    <span class="eyebrow">YOUR ROADMAP</span>
-                    <h2>Class 11 JEE</h2>
-                </div>
-
-                <button class="text-btn" data-page-target="chapters">
-                    View all →
-                </button>
+            <div class="analysis-icon">
+              🎯
             </div>
 
-            <div class="subject-grid">
+          </div>
 
-                <div class="subject-card physics">
-                    <div class="subject-top">
-                        <div class="subject-icon">P</div>
-                        <span>PHYSICS</span>
-                    </div>
 
-                    <h3>Physics</h3>
-                    <p id="physicsProgress">0 / 16 chapters</p>
+          <div class="big-progress-bar">
 
-                    <div class="progress">
-                        <div id="physicsBar"></div>
-                    </div>
+            <div
+              id="analysisOverallBar"
+              style="width:0%"
+            ></div>
 
-                    <button class="subject-btn" data-subject="Physics">
-                        Open Physics →
-                    </button>
-                </div>
+          </div>
 
-                <div class="subject-card chemistry">
-                    <div class="subject-top">
-                        <div class="subject-icon">C</div>
-                        <span>CHEMISTRY</span>
-                    </div>
 
-                    <h3>Chemistry</h3>
-                    <p id="chemistryProgress">0 / 13 chapters</p>
+          <p id="analysisMessage">
+            Start completing chapters to generate your analysis.
+          </p>
 
-                    <div class="progress">
-                        <div id="chemistryBar"></div>
-                    </div>
+        </div>
 
-                    <button class="subject-btn" data-subject="Chemistry">
-                        Open Chemistry →
-                    </button>
-                </div>
 
-                <div class="subject-card maths">
-                    <div class="subject-top">
-                        <div class="subject-icon">M</div>
-                        <span>MATHEMATICS</span>
-                    </div>
+        <div class="analysis-card">
 
-                    <h3>Mathematics</h3>
-                    <p id="mathsProgress">0 / 16 chapters</p>
+          <span class="card-label">
+            TASK COMPLETION
+          </span>
 
-                    <div class="progress">
-                        <div id="mathsBar"></div>
-                    </div>
+          <div class="analysis-number">
+            <strong id="taskPercentage">0%</strong>
+          </div>
 
-                    <button class="subject-btn" data-subject="Mathematics">
-                        Open Mathematics →
-                    </button>
-                </div>
+          <div class="small-ring">
+            <div id="taskRing"></div>
+          </div>
 
-            </div>
+          <p id="taskAnalysis">
+            No tasks completed yet.
+          </p>
 
-        </section>
+        </div>
 
-        <!-- CHAPTERS -->
-        <section id="chapters" class="page">
 
-            <div class="section-heading">
-                <div>
-                    <span class="eyebrow">JEE SYLLABUS</span>
-                    <h2>Chapter Command Center</h2>
-                </div>
-            </div>
+        <div class="analysis-card">
 
-            <div class="chapter-controls">
+          <span class="card-label">
+            CHAPTER MASTERY
+          </span>
 
-                <div class="search-box">
-                    🔎
-                    <input
-                        type="text"
-                        id="chapterSearch"
-                        placeholder="Search chapters..."
-                    >
-                </div>
+          <div class="analysis-number">
+            <strong id="chapterPercentage">0%</strong>
+          </div>
 
-                <div class="filters">
-                    <button class="filter active" data-filter="All">All</button>
-                    <button class="filter" data-filter="Physics">Physics</button>
-                    <button class="filter" data-filter="Chemistry">Chemistry</button>
-                    <button class="filter" data-filter="Mathematics">Mathematics</button>
-                </div>
+          <p id="chapterAnalysis">
+            Keep completing chapters.
+          </p>
 
-            </div>
+        </div>
 
-            <div id="chapterList" class="chapter-list"></div>
+      </div>
 
-        </section>
 
-        <!-- TESTS -->
-        <section id="tests" class="page">
 
-            <div class="section-heading">
-                <div>
-                    <span class="eyebrow">PRACTICE ARENA</span>
-                    <h2>Tests & Practice</h2>
-                </div>
-            </div>
+      <!-- SUBJECT ANALYSIS -->
 
-            <div class="test-grid">
+      <div class="analysis-section">
 
-                <div class="test-card">
-                    <span class="test-number">01</span>
-                    <h3>Physics Test</h3>
-                    <p>20 JEE-level questions</p>
-                    <button class="primary-btn start-test" data-subject="Physics">
-                        Start test
-                    </button>
-                </div>
+        <div class="panel-heading">
 
-                <div class="test-card">
-                    <span class="test-number">02</span>
-                    <h3>Chemistry Test</h3>
-                    <p>20 JEE-level questions</p>
-                    <button class="primary-btn start-test" data-subject="Chemistry">
-                        Start test
-                    </button>
-                </div>
+          <div>
+            <span class="section-label">
+              SUBJECT INTELLIGENCE
+            </span>
 
-                <div class="test-card">
-                    <span class="test-number">03</span>
-                    <h3>Mathematics Test</h3>
-                    <p>20 JEE-level questions</p>
-                    <button class="primary-btn start-test" data-subject="Mathematics">
-                        Start test
-                    </button>
-                </div>
+            <h3>Subject Performance</h3>
+          </div>
 
-            </div>
+        </div>
 
-            <div class="test-info">
-                <h3>⚡ Full JEE Mock Test</h3>
-                <p>
-                    Build a full mock-test system here later with JEE Main
-                    and Advanced patterns.
-                </p>
 
-                <button class="secondary-btn" id="mockBtn">
-                    Coming soon
-                </button>
-            </div>
+        <div
+          id="analysisSubjects"
+          class="analysis-subjects"
+        ></div>
 
-        </section>
+      </div>
 
-        <!-- ANALYTICS -->
-        <section id="analytics" class="page">
 
-            <div class="section-heading">
-                <div>
-                    <span class="eyebrow">PERFORMANCE</span>
-                    <h2>Your Analytics</h2>
-                </div>
-            </div>
 
-            <div class="analytics-grid">
+      <!-- STUDY INSIGHTS -->
 
-                <div class="analytics-card big">
-                    <span>OVERALL COMPLETION</span>
-                    <strong id="analyticsProgress">0%</strong>
+      <div class="analysis-bottom">
 
-                    <div class="big-progress">
-                        <div id="analyticsBar"></div>
-                    </div>
-                </div>
+        <div class="panel insights-panel">
 
-                <div class="analytics-card">
-                    <span>COMPLETED</span>
-                    <strong id="analyticsCompleted">0</strong>
-                    <small>chapters</small>
-                </div>
+          <span class="section-label">
+            AI-STYLE INSIGHTS
+          </span>
 
-                <div class="analytics-card">
-                    <span>REMAINING</span>
-                    <strong id="analyticsRemaining">45</strong>
-                    <small>chapters</small>
-                </div>
+          <h3>What your data says</h3>
 
-            </div>
 
-            <div class="subject-analysis">
+          <div id="insightsList"></div>
 
-                <div class="analysis-row">
-                    <span>Physics</span>
-                    <div class="analysis-bar">
-                        <div id="analysisPhysics"></div>
-                    </div>
-                    <strong id="analysisPhysicsText">0%</strong>
-                </div>
+        </div>
 
-                <div class="analysis-row">
-                    <span>Chemistry</span>
-                    <div class="analysis-bar">
-                        <div id="analysisChemistry"></div>
-                    </div>
-                    <strong id="analysisChemistryText">0%</strong>
-                </div>
 
-                <div class="analysis-row">
-                    <span>Mathematics</span>
-                    <div class="analysis-bar">
-                        <div id="analysisMaths"></div>
-                    </div>
-                    <strong id="analysisMathsText">0%</strong>
-                </div>
+        <div class="panel readiness-panel">
 
-            </div>
+          <span class="section-label">
+            JEE READINESS
+          </span>
 
-        </section>
+          <h3>Preparation Meter</h3>
 
-        <!-- TIMER -->
-        <section id="timer" class="page">
 
-            <div class="timer-container">
+          <div class="readiness-meter">
 
-                <span class="eyebrow">DEEP WORK</span>
-                <h2>Study Timer</h2>
+            <div
+              id="readinessBar"
+              style="width:0%"
+            ></div>
 
-                <div class="timer-circle">
-                    <span id="timerDisplay">25:00</span>
-                    <small>FOCUS SESSION</small>
-                </div>
+          </div>
 
-                <div class="timer-controls">
-                    <button class="primary-btn" id="timerStart">Start</button>
-                    <button class="secondary-btn" id="timerReset">Reset</button>
-                </div>
 
-                <div class="timer-presets">
-                    <button data-minutes="25">25 min</button>
-                    <button data-minutes="45">45 min</button>
-                    <button data-minutes="60">60 min</button>
-                </div>
+          <strong
+            id="readinessPercent"
+            class="readiness-number"
+          >
+            0%
+          </strong>
 
-            </div>
+          <p id="readinessText">
+            Your readiness will update as you complete your syllabus.
+          </p>
 
-        </section>
+        </div>
 
-    </main>
+      </div>
 
-</div>
+    </section>
 
-<div id="toast" class="toast"></div>
 
-<script src="script.js"></script>
+
+    <!-- FOCUS -->
+
+    <section id="focus" class="page">
+
+      <div class="focus-container">
+
+        <span class="section-label">
+          DEEP WORK
+        </span>
+
+        <h2>Focus Mode</h2>
+
+        <p>
+          Put your phone away. Lock in.
+        </p>
+
+
+        <div class="timer">
+
+          <span id="timerDisplay">
+            25:00
+          </span>
+
+        </div>
+
+
+        <div class="timer-controls">
+
+          <button
+            onclick="startTimer()"
+            class="primary-btn"
+          >
+            Start
+          </button>
+
+          <button
+            onclick="pauseTimer()"
+            class="secondary-btn"
+          >
+            Pause
+          </button>
+
+          <button
+            onclick="resetTimer()"
+            class="secondary-btn"
+          >
+            Reset
+          </button>
+
+        </div>
+
+
+        <div class="focus-presets">
+
+          <button onclick="setTimer(25)">
+            25 min
+          </button>
+
+          <button onclick="setTimer(50)">
+            50 min
+          </button>
+
+          <button onclick="setTimer(90)">
+            90 min
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <div id="toast"></div>
+
+  <script src="script.js"></script>
 
 </body>
 </html>
