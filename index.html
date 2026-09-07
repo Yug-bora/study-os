@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study OS — JEE Class 11</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <div>
+                <h2>Study OS</h2>
+                <span>JEE COMMAND CENTER</span>
+            </div>
+        </div>
+
+        <nav>
+            <button class="nav-btn active" data-page="dashboard">
+                <span>⌂</span> Dashboard
+            </button>
+
+            <button class="nav-btn" data-page="chapters">
+                <span>▣</span> Chapters
+            </button>
+
+            <button class="nav-btn" data-page="tests">
+                <span>◉</span> Tests
+            </button>
+
+            <button class="nav-btn" data-page="analytics">
+                <span>◈</span> Analytics
+            </button>
+
+            <button class="nav-btn" data-page="timer">
+                <span>◷</span> Study Timer
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="class-card">
+                <small>CURRENT TRACK</small>
+                <strong>CLASS 11</strong>
+                <span>JEE MAIN + ADVANCED</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">MONDAY • SEPTEMBER 7</p>
+                <h1 id="pageTitle">Good morning, Warrior.</h1>
+            </div>
+
+            <div class="top-actions">
+                <div class="streak">
+                    🔥 <strong id="streakValue">1</strong>
+                    <span>day streak</span>
+                </div>
+
+                <div class="avatar">Y</div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="page active">
+
+            <div class="hero">
+                <div>
+                    <span class="badge">CLASS 11 • JEE</span>
+                    <h2>Your JEE journey<br><span>starts here.</span></h2>
+                    <p>
+                        Track chapters, practice, tests and your preparation
+                        progress from one command center.
+                    </p>
+
+                    <button class="primary-btn" id="continueBtn">
+                        Continue studying →
+                    </button>
+                </div>
+
+                <div class="hero-orb">
+                    <div class="orb-inner">
+                        <strong id="overallProgress">0%</strong>
+                        <span>OVERALL</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <span>CHAPTERS</span>
+                    <strong id="completedCount">0</strong>
+                    <small>completed</small>
+                </div>
+
+                <div class="stat-card">
+                    <span>QUESTIONS</span>
+                    <strong id="questionCount">0</strong>
+                    <small>practiced</small>
+                </div>
+
+                <div class="stat-card">
+                    <span>STUDY TIME</span>
+                    <strong id="studyTime">0h</strong>
+                    <small>this week</small>
+                </div>
+
+                <div class="stat-card">
+                    <span>ACCURACY</span>
+                    <strong id="accuracy">0%</strong>
+                    <small>practice accuracy</small>
+                </div>
+
+            </div>
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">YOUR ROADMAP</span>
+                    <h2>Class 11 JEE</h2>
+                </div>
+
+                <button class="text-btn" data-page-target="chapters">
+                    View all →
+                </button>
+            </div>
+
+            <div class="subject-grid">
+
+                <div class="subject-card physics">
+                    <div class="subject-top">
+                        <div class="subject-icon">P</div>
+                        <span>PHYSICS</span>
+                    </div>
+
+                    <h3>Physics</h3>
+                    <p id="physicsProgress">0 / 16 chapters</p>
+
+                    <div class="progress">
+                        <div id="physicsBar"></div>
+                    </div>
+
+                    <button class="subject-btn" data-subject="Physics">
+                        Open Physics →
+                    </button>
+                </div>
+
+                <div class="subject-card chemistry">
+                    <div class="subject-top">
+                        <div class="subject-icon">C</div>
+                        <span>CHEMISTRY</span>
+                    </div>
+
+                    <h3>Chemistry</h3>
+                    <p id="chemistryProgress">0 / 13 chapters</p>
+
+                    <div class="progress">
+                        <div id="chemistryBar"></div>
+                    </div>
+
+                    <button class="subject-btn" data-subject="Chemistry">
+                        Open Chemistry →
+                    </button>
+                </div>
+
+                <div class="subject-card maths">
+                    <div class="subject-top">
+                        <div class="subject-icon">M</div>
+                        <span>MATHEMATICS</span>
+                    </div>
+
+                    <h3>Mathematics</h3>
+                    <p id="mathsProgress">0 / 16 chapters</p>
+
+                    <div class="progress">
+                        <div id="mathsBar"></div>
+                    </div>
+
+                    <button class="subject-btn" data-subject="Mathematics">
+                        Open Mathematics →
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- CHAPTERS -->
+        <section id="chapters" class="page">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">JEE SYLLABUS</span>
+                    <h2>Chapter Command Center</h2>
+                </div>
+            </div>
+
+            <div class="chapter-controls">
+
+                <div class="search-box">
+                    🔎
+                    <input
+                        type="text"
+                        id="chapterSearch"
+                        placeholder="Search chapters..."
+                    >
+                </div>
+
+                <div class="filters">
+                    <button class="filter active" data-filter="All">All</button>
+                    <button class="filter" data-filter="Physics">Physics</button>
+                    <button class="filter" data-filter="Chemistry">Chemistry</button>
+                    <button class="filter" data-filter="Mathematics">Mathematics</button>
+                </div>
+
+            </div>
+
+            <div id="chapterList" class="chapter-list"></div>
+
+        </section>
+
+        <!-- TESTS -->
+        <section id="tests" class="page">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">PRACTICE ARENA</span>
+                    <h2>Tests & Practice</h2>
+                </div>
+            </div>
+
+            <div class="test-grid">
+
+                <div class="test-card">
+                    <span class="test-number">01</span>
+                    <h3>Physics Test</h3>
+                    <p>20 JEE-level questions</p>
+                    <button class="primary-btn start-test" data-subject="Physics">
+                        Start test
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <span class="test-number">02</span>
+                    <h3>Chemistry Test</h3>
+                    <p>20 JEE-level questions</p>
+                    <button class="primary-btn start-test" data-subject="Chemistry">
+                        Start test
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <span class="test-number">03</span>
+                    <h3>Mathematics Test</h3>
+                    <p>20 JEE-level questions</p>
+                    <button class="primary-btn start-test" data-subject="Mathematics">
+                        Start test
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="test-info">
+                <h3>⚡ Full JEE Mock Test</h3>
+                <p>
+                    Build a full mock-test system here later with JEE Main
+                    and Advanced patterns.
+                </p>
+
+                <button class="secondary-btn" id="mockBtn">
+                    Coming soon
+                </button>
+            </div>
+
+        </section>
+
+        <!-- ANALYTICS -->
+        <section id="analytics" class="page">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">PERFORMANCE</span>
+                    <h2>Your Analytics</h2>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+
+                <div class="analytics-card big">
+                    <span>OVERALL COMPLETION</span>
+                    <strong id="analyticsProgress">0%</strong>
+
+                    <div class="big-progress">
+                        <div id="analyticsBar"></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <span>COMPLETED</span>
+                    <strong id="analyticsCompleted">0</strong>
+                    <small>chapters</small>
+                </div>
+
+                <div class="analytics-card">
+                    <span>REMAINING</span>
+                    <strong id="analyticsRemaining">45</strong>
+                    <small>chapters</small>
+                </div>
+
+            </div>
+
+            <div class="subject-analysis">
+
+                <div class="analysis-row">
+                    <span>Physics</span>
+                    <div class="analysis-bar">
+                        <div id="analysisPhysics"></div>
+                    </div>
+                    <strong id="analysisPhysicsText">0%</strong>
+                </div>
+
+                <div class="analysis-row">
+                    <span>Chemistry</span>
+                    <div class="analysis-bar">
+                        <div id="analysisChemistry"></div>
+                    </div>
+                    <strong id="analysisChemistryText">0%</strong>
+                </div>
+
+                <div class="analysis-row">
+                    <span>Mathematics</span>
+                    <div class="analysis-bar">
+                        <div id="analysisMaths"></div>
+                    </div>
+                    <strong id="analysisMathsText">0%</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- TIMER -->
+        <section id="timer" class="page">
+
+            <div class="timer-container">
+
+                <span class="eyebrow">DEEP WORK</span>
+                <h2>Study Timer</h2>
+
+                <div class="timer-circle">
+                    <span id="timerDisplay">25:00</span>
+                    <small>FOCUS SESSION</small>
+                </div>
+
+                <div class="timer-controls">
+                    <button class="primary-btn" id="timerStart">Start</button>
+                    <button class="secondary-btn" id="timerReset">Reset</button>
+                </div>
+
+                <div class="timer-presets">
+                    <button data-minutes="25">25 min</button>
+                    <button data-minutes="45">45 min</button>
+                    <button data-minutes="60">60 min</button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
